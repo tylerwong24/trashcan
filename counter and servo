@@ -1,0 +1,93 @@
+#include <IRremote.h>      
+#include <Servo.h>
+#define plus 0xFF906F   //clockwise rotation button
+#define minus 0xFFE01F  //counter clockwise rotation button
+
+int RECV_PIN = 6;       //IR receiver pin
+Servo servo;
+int val;                //rotation angle
+bool cwRotation, ccwRotation;  //the states of rotation
+
+IRrecv irrecv(RECV_PIN);
+
+decode_results results;
+
+#include <LiquidCrystal.h>  
+ #define trigPin 13
+ #define echoPin 8
+ // initialize the library with the numbers of the interface pins
+ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+ int counter = 0;
+ int currentState = 0;
+ int previousState = 0;
+
+void setup()
+{
+  Serial.begin(9600);
+  irrecv.enableIRIn(); // Start the receiver
+  servo.attach(7);     //servo pin
+  
+  pinMode(trigPin, OUTPUT);
+ pinMode(echoPin, INPUT);
+ lcd.begin(16, 2);
+ lcd.setCursor(2, 0);
+ lcd.print("Trash Tossed");
+}
+
+void loop() 
+{
+  if (irrecv.decode(&results)) {
+    Serial.println(results.value, HEX);
+    irrecv.resume(); // Receive the next value
+
+    if (results.value == plus)
+    {
+      cwRotation = !cwRotation;      //toggle the rotation value
+      ccwRotation = false;         //no rotation in this direction
+    }
+
+    if (results.value == minus)
+    {
+      ccwRotation = !ccwRotation;   //toggle the rotation value
+      cwRotation = false;            //no rotation in this direction
+    }
+  }
+  if (cwRotation && (val != 180))  {
+    val++;    
+                   //for colockwise button
+  }
+  if (ccwRotation && (val != 0))  {
+    val--;                         //for counter colockwise button
+  }
+  servo.write(val);
+  if ((val <= 180) && (val >= 10)) {
+    delay(0);
+  }
+  else {
+    delay(200);
+  }
+        // general speed
+
+  long duration, distance;
+ digitalWrite(trigPin, LOW); 
+ delayMicroseconds(2); 
+ digitalWrite(trigPin, HIGH);
+ delayMicroseconds(10); 
+ digitalWrite(trigPin, LOW);
+ duration = pulseIn(echoPin, HIGH);
+ distance = (duration/2) / 29.1;
+ if (distance <= 10){  
+ currentState = 1;
+ }
+ else {
+ currentState = 0;
+ }
+ 
+ if(currentState != previousState){
+ if(currentState == 1){
+ counter = counter + 1;
+ lcd.setCursor(7,1);
+ lcd.print(counter);
+    }
+  }
+}
