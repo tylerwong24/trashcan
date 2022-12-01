@@ -64,7 +64,7 @@ void loop()
     delay(0);
   }
   else {
-    delay(200);
+    delay(150);
   }
         // general speed
 
@@ -75,7 +75,7 @@ void loop()
  delayMicroseconds(10); 
  digitalWrite(trigPin, LOW);
  duration = pulseIn(echoPin, HIGH);
- distance = (duration/2) / 29.1;
+ distance = duration/58.2;
  if (distance <= 3){  
  currentState = 1;
  }
@@ -83,11 +83,15 @@ void loop()
  currentState = 0;
  }
  
- if(currentState != previousState){
+ 
  if(currentState == 1){
  counter = counter + 1;
+ }
+ else { 
+   counter = counter + 0;
+ }
  lcd.setCursor(7,1);
  lcd.print(counter);
-    }
-  }
+    
+  
 }
