@@ -1,7 +1,7 @@
 #include <IRremote.h>      
 #include <Servo.h>
-#define plus 0xFFE01F   //clockwise rotation button
-#define minus 0xFF906F  //counter clockwise rotation button
+#define plus 0xFF906F   //clockwise rotation button
+#define minus 0xFFE01F  //counter clockwise rotation button
 
 int RECV_PIN = 6;       //IR receiver pin
 Servo servo;
@@ -52,19 +52,19 @@ void loop()
       cwRotation = false;            //no rotation in this direction
     }
   }
-  if (cwRotation && (val != 180))  {
+  if (cwRotation && (val != 100))  {
     val++;    
                    //for colockwise button
   }
-  if (ccwRotation && (val != 0))  {
+  if (ccwRotation && (val != 160))  {
     val--;                         //for counter colockwise button
   }
   servo.write(val);
-  if ((val <= 180) && (val >= 10)) {
+  if ((val <= 90) && (val >= 160)) {
     delay(0);
   }
   else {
-    delay(150);
+    delay(200);
   }
         // general speed
 
